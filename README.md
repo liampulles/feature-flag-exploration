@@ -14,5 +14,7 @@ There are disadvantages with this approach though:
   across apps (so flags might be intermittently read as on/off for a period across the broad system).
 - It isn't usable by non-developers (unless they are comfortable with how to use kubernetes, or whatever
   deployment system deploys the configmap to kubernetes)
+- This will not work if you use a `subPath` or mount the configmap as environment variables. It only works
+  if mounting as a file normally, or if using projections (though I have not tested the latter).
 
 But, this is an example of how a bare Kubernetes setup can be more powerful than you might think.
