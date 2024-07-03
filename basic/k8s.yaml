@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: basic
+  name: basic
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: basic
+  template:
+    metadata:
+      labels:
+        app: basic
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - image: k3d-registry:33065/basic:latest
+          name: basic
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 9080
+      #     volumeMounts:
+      #     - name: my-config
+      #       mountPath: "/myApp/config.yaml"
+      #       subPath: "config.yaml"
+      #       readOnly: true
+      # volumes:
+      # - name: my-config
+      #   secret:
+      #     secretName: basic
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: basic
+  name: basic
+spec:
+  ports:
+  - name: basic
+    port: 80
+    targetPort: 9080
+  selector:
+    app: basic
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: basic
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: basic
+            port:
+              number: 80
