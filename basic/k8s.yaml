@@ -26,15 +26,13 @@ spec:
           imagePullPolicy: "Always"
           ports:
             - containerPort: 9080
-      #     volumeMounts:
-      #     - name: my-config
-      #       mountPath: "/myApp/config.yaml"
-      #       subPath: "config.yaml"
-      #       readOnly: true
-      # volumes:
-      # - name: my-config
-      #   secret:
-      #     secretName: basic
+          volumeMounts:
+            - name: flags
+              mountPath: /flags
+      volumes:
+        - name: flags
+          configMap:
+            name: flags
 ---
 apiVersion: v1
 kind: Service
